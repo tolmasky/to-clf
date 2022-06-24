@@ -8,9 +8,6 @@ const getOptionsParameter = ([parameter]) =>
     parameter.type === "AssignmentPattern" ? parameter.left :
     false;
 
-const { isArray } = Array;
-const { slice } = Array.prototype;
-
 
 module.exports = function (f)
 {
@@ -38,16 +35,23 @@ module.exports = function (f)
     const adjustedArguments = !hasOptionsParameter && argv[2] !== "--" ?
         [argv[0], argv[1], "--", ...argv.slice(2)] :
         argv;
-
-    return properties
+    const parameters = Object.fromEntries(properties
         .map(toParameter)
         .filter(parameter => !!parameter)
-        .reduce((program, { name, isBoolean, description }) =>
+        .map(parameter => [parameter.implied, parameter]));
+
+    return Object
+        .values(parameters)
+        .reduce((program, { flag, type, description }) =>
             program.option(
             [
-                `-${name.charAt(0)},`,
-                `--${name}`,
-                isBoolean ? "" : `[${name}]`
+                `-${flag.charAt(0)},`,
+                `--${flag}`,
+                type === "boolean" ?
+                    "" :
+                type === "array" ?
+                    `<${flag}...>` :
+                    `<${flag}>`
             ].join(" "), description),
             fExpression
                 .params
@@ -63,10 +67,14 @@ module.exports = function (f)
             const count = parsed.length;
             const args = parsed[count - 1].args.slice(0);
 
-            const argumentsWithOptions =
-                hasOptionsParameter ?
-                    [{ [isCLI]: true, ...parsed[count - 2] }, ...args] :
-                    args;
+            const argumentsWithOptions = hasOptionsParameter ?
+                [{
+                    [isCLI]: true,
+                    ...Object.fromEntries(Object
+                        .entries(parsed[count - 2])
+                        .map(([key, value]) => [parameters[key].name, value]))
+                }, ...args] :
+                args;
 
             try
             {
@@ -98,20 +106,31 @@ const toPositionalArgument = Argument => node =>
 const toUsage = ({ leadingComments }) =>
     leadingComments && leadingComments[0].value.trim() || "";
 
+const toParameterType = ({ value }) =>
+    value.type !== "AssignmentPattern" ? false :
+    value.right.type === "BooleanLiteral" ? "boolean" :
+    value.right.type === "ArrayExpression" ? "array" :
+    false;
+
 const toParameter = (function ()
 {
-    const toFlagName = ({ key }) =>
-        key.name.replace(/[A-Z]/g, ch => `-${ch.toLowerCase()}`);
+    const toSingular = string => string.replace(/s$/, "");
+    const toFlag = (name, type) =>
+        (type === "array" ? toSingular : x => x)
+            (name.replace(/[A-Z]/g, ch => `-${ch.toLowerCase()}`));
 
     return function toParameter(node)
     {
+        const name = node.key.name;
+        const type = toParameterType(node);
+
         return !node.computed &&
         {
-            name: toFlagName(node),
+            flag: toFlag(name, type),
+            name,
+            implied: type === "array" ? toSingular(name) : name,
             description: toDescription(node),
-            isBoolean:
-                node.value.type === "AssignmentPattern" &&
-                node.value.right.type === "BooleanLiteral"
+            type
         };
     }
 })();
