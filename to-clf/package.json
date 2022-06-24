@@ -1,0 +1,20 @@
+{
+  "name": "to-clf",
+  "version": "1.0.0-alpha.1",
+  "description": "",
+  "main": "to-clf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Francisco Ryan Tolmasky I",
+    "email": "tolmasky@gmail.com",
+    "url": "https://tolmasky.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.15.7",
+    "commander": "^8.2.0"
+  }
+}
