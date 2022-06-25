@@ -29,3 +29,7 @@ module.exports = toCLF(async function deploy
     console.log(`Deploying to ${environment}!`);
 });
 ```
+
+If you were to run this file directly, you would get the following output:
+
+![Terminal output of example deploy function run directly as a CLI program](./README/terminal-output.png)
