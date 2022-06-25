@@ -6,4 +6,4 @@ const toCLF = require("../to-clf");
 const [node, clf, filename, ...argv] = process.argv;
 const f = require(resolve(process.cwd(), filename));
 
-toCLF(f, [node, ...argv]);
+toCLF(f, [node, filename, ...argv]);
