@@ -1,6 +1,6 @@
 {
   "name": "to-clf",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Automatically run functions as CLI programs.",
   "main": "to-clf.js",
   "bin": {
