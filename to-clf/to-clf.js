@@ -9,18 +9,18 @@ const getOptionsParameter = ([parameter]) =>
     false;
 
 
-module.exports = function (f)
+module.exports = function (f, argv = false)
 {
-    if (require.main && callsite() !== require.main.filename)
+    if (!argv && require.main && callsite() !== require.main.filename)
         return f;
-
+/*
     // Just do this unconditionally in case it changes...
     spawn("npm", ["install", `--prefix=${__dirname}`]);
 
     const pkgpath = findOwningPackagePath(require.main.filename);
 
     spawn("npm", ["install", `--prefix=${pkgpath}`]);
-
+*/
     const { Command, Argument } = require("commander");
     const { parseExpression } = require("@babel/parser");
 
@@ -31,10 +31,16 @@ module.exports = function (f)
     const positionalArgumentsName = fExpression
         .params[hasOptionsParameter ? 1 : 0]
 
-    const { argv } = process;
-    const adjustedArguments = !hasOptionsParameter && argv[2] !== "--" ?
-        [argv[0], argv[1], "--", ...argv.slice(2)] :
-        argv;
+    const unadjustedArguments = argv || process.argv;
+    const adjustedArguments =
+        !hasOptionsParameter && unadjustedArguments[2] !== "--" ?
+        [
+            unadjustedArguments[0],
+            unadjustedArguments[1],
+            "--",
+            ...unadjustedArguments.slice(2)
+        ] :
+        unadjustedArguments;
     const parameters = Object.fromEntries(properties
         .map(toParameter)
         .filter(parameter => !!parameter)
