@@ -1,4 +1,4 @@
-# toCLF
+# toCLF ("to command line function")
 
 **Command Line Functions** are functions that can be called directly from the command line.
 
