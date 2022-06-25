@@ -33,3 +33,11 @@ module.exports = toCLF(async function deploy
 If you were to run this file directly, you would get the following output:
 
 ![Terminal output of example deploy function run directly as a CLI program](/to-clf/README/terminal-output.png)
+
+### How to install it
+
+[`to-clf` is available on npm](https://npmjs.com/to-clf).
+
+```bash
+$ npm install to-clf
+```
