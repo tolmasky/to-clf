@@ -33,7 +33,7 @@ Not only that, the comments will be appropriately interpreted for the `--help` c
 
 ```console
 $ clf deploy.js --help
-Usage: deploy [options] [environment]
+Usage: deploy [options] <environment>
 
 Arguments:
   environment               qa, staging, or production
