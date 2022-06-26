@@ -14,9 +14,9 @@ For example, say you've already written a function called `deploy` in
 ```javascript
 module.exports = async function deploy
 ({
-    dryRun = false /* Just print what this will do. */,
-    regions = [] /* Which regions to deploy to. */,
-}, environment /* qa, staging, or production */ )
+    dryRun = false /* Just print what this will do */,
+    regions = [] /* Which regions to deploy to */,
+},  environment /* qa, staging, or production */ )
 {
     console.log(`Deploying to ${environment} to ${regions.join(", ")}!`);
 }
@@ -24,11 +24,25 @@ module.exports = async function deploy
 
 You can just call it with `clf` like so:
 
-![Terminal output of example deploy function run directly as a CLI program](/to-clf/README/terminal-output.png)
+```console
+$ clf deploy.js qa --region aws-west-2
+Deploying to qa to aws-west-2!
+```
 
 Not only that, the comments will be appropriately interpreted for the `--help` command:
 
-![Terminal output of example deploy function --help command](/to-clf/README/terminal-output-help.png)
+```console
+$ clf deploy.js --help
+Usage: deploy [options] [environment]
+
+Arguments:
+  environment               qa, staging, or production
+
+Options:
+  -d, --dry-run             Just print what this will do
+  -r, --region <region...>  Which regions to deploy to
+  -h, --help                display help for command
+```
 
 Notice that `clf` automatically inferred the types of the command line options
 from the actual function definition. It knows `dryRun` is a boolean from the
@@ -47,7 +61,7 @@ module.exports = toCLF(async function deploy
 ({
     dryRun = false /* Just print what this will do. */,
     regions = [] /* Which regions to deploy to. */,
-}, environment /* qa, staging, or production */ )
+},  environment /* qa, staging, or production */ )
 {
     console.log(`Deploying to ${environment} to ${regions.join(", ")}!`);
 });
@@ -84,11 +98,9 @@ module.exports = toCLF(function deploy
     // toCLF turns arrays into options you can pass multiple times
     regions = [] /* Regions to deploy to. */,
 
-    // If you leave out a default parameter, the option becomes required.
-    necessary /* Have to pass this in. */,
-
-    // Unnamed arguments are also supported:
-}, environment /* qa, staging, or production */)
+    // Unnamed arguments are also supported. If you leave out a default parameter,
+    // the option or argument becomes required.
+},  environment /* qa, staging, or production */)
 {
     console.log(`Deploying to ${environment} to ${regions.join(", ")}!`);
 });
@@ -97,6 +109,14 @@ module.exports = toCLF(function deploy
 ### Installing to-clf
 
 [`to-clf` is available on npm](https://npmjs.com/to-clf).
+
+To use the `clf` command line utility, install it globally:
+
+```bash
+$ npm install to-clf --location=global
+```
+
+To use the `toCLF` function, install it locally:
 
 ```bash
 $ npm install to-clf
