@@ -102,8 +102,10 @@ const toDescription =
         trailingComments && trailingComments[0].value.trim();
 
 const toPositionalArgument = Argument => node =>
+    node.type === "AssignmentPattern" ?
+        new Argument(`[${node.left.name}]`, toDescription(node)) :
     node.type === "Identifier" ?
-        new Argument(node.name, toDescription(node)) :
+        new Argument(`<${node.name}>`, toDescription(node)) :
     node.type === "RestElement" &&
     node.argument.type === "Identifier" ?
         new Argument(`...${node.argument.name}`, toDescription(node)) :
