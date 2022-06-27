@@ -1,11 +1,10 @@
-const { spawnSync: spawn } = require("child_process");
-
 const fail = name => { throw Error(name) };
 const isCLI = Symbol("isCLI");
 const getOptionsParameter = ([parameter]) =>
     !parameter ? false :
     parameter.type === "ObjectPattern" ? parameter :
-    parameter.type === "AssignmentPattern" ? parameter.left :
+    parameter.type === "AssignmentPattern" &&
+    parameter.left.type === "ObjectPattern" ? parameter.left :
     false;
 
 
@@ -13,14 +12,7 @@ module.exports = function (f, argv = false)
 {
     if (!argv && require.main && callsite() !== require.main.filename)
         return f;
-/*
-    // Just do this unconditionally in case it changes...
-    spawn("npm", ["install", `--prefix=${__dirname}`]);
 
-    const pkgpath = findOwningPackagePath(require.main.filename);
-
-    spawn("npm", ["install", `--prefix=${pkgpath}`]);
-*/
     const { Command, Argument } = require("commander");
     const { parseExpression } = require("@babel/parser");
 
@@ -33,7 +25,9 @@ module.exports = function (f, argv = false)
 
     const unadjustedArguments = argv || process.argv;
     const adjustedArguments =
-        !hasOptionsParameter && unadjustedArguments[2] !== "--" ?
+        !hasOptionsParameter &&
+        unadjustedArguments[2] !== "--" &&
+        unadjustedArguments[2] !== "--help" ?
         [
             unadjustedArguments[0],
             unadjustedArguments[1],
@@ -158,21 +152,3 @@ function callsite()
 
     return backtrace[2].getFileName();
 }
-
-const findOwningPackagePath = (function ()
-{
-    const { existsSync: exists } = require("fs");
-    const { dirname, join } = require("path");
-
-    return function findOwningPackagePath(filename, original = filename)
-    {
-        if (filename === "/")
-            throw Error(`No owning package.json found for "${original}"`);
-
-        const pkgpath = join(dirname(filename), "package.json");
-
-        return exists(pkgpath) ?
-            dirname(pkgpath) :
-            findOwningPackagePath(dirname(filename));
-    }
-})();
