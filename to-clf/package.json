@@ -2,10 +2,11 @@
   "name": "to-clf",
   "version": "1.0.0-alpha.5",
   "description": "Automatically run functions as CLI programs.",
-  "main": "to-clf.js",
   "bin": {
     "clf": "./bin/clf"
   },
+  "main": "to-clf.js",
+  "exports": "./to-clf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
