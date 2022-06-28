@@ -102,7 +102,7 @@ const toPositionalArgument = Argument => node =>
         new Argument(`<${node.name}>`, toDescription(node)) :
     node.type === "RestElement" &&
     node.argument.type === "Identifier" ?
-        new Argument(`...${node.argument.name}`, toDescription(node)) :
+        new Argument(`[${node.argument.name}...]`, toDescription(node)) :
     false
 
 const toUsage = ({ leadingComments }) =>
