@@ -1,5 +1,5 @@
 const toCLF = require("to-clf");
-console.log(require.resolve("to-clf"));
+
 
 module.exports = toCLF(async function deploy
 ({
