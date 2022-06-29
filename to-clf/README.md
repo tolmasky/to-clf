@@ -22,6 +22,8 @@ module.exports = async function deploy
 }
 ```
 
+test test
+
 You can just call it with `clf` like so:
 
 ```console
