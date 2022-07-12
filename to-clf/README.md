@@ -1,12 +1,14 @@
-# toCLF ("to command line function")
+# Command Line Functions
 
-**Command Line Functions** are functions that can be called directly from the
-command line.
+**Command Line Functions** are existing JavaScript functions that can be called
+directly from the command line without the need to manually write a wrapper CLI
+utility.
 
-The easiest way to use `to-clf` is to just call the `clf` command line utility
-by passing it an existing JavaScript file and it will run whichever function
-this file exports as a CLI app, automatically analyzing its parameters and
-turning them into command line parameters you can pass in.
+
+The easiest way to do this is to pass an existing JavaScript file that exports a
+function to the `clf` command line utility. `clf` will **analyze the function
+signature of the exported function and automatically generate the corresponding
+flags and options that you can then pass in through the command line.**
 
 For example, say you've already written a function called `deploy` in
 `deploy.js`:
@@ -22,14 +24,15 @@ module.exports = async function deploy
 }
 ```
 
-You can just call it with `clf` like so:
+You can treat this function a CLI utility by just calling `clf` like so:
 
 ```console
 $ clf deploy.js qa --region aws-west-2
 Deploying to qa to aws-west-2!
 ```
 
-Not only that, the comments will be appropriately interpreted for the `--help` command:
+Not only that, but the comments will be appropriately interpreted for the
+`--help` command:
 
 ```console
 $ clf deploy.js --help

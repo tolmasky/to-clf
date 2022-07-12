@@ -3,14 +3,17 @@
   "version": "1.0.0-alpha.6",
   "description": "Automatically run functions as CLI programs.",
   "bin": {
-    "clf": "./bin/clf"
+    "clf": "bin/clf"
   },
   "main": "to-clf.js",
   "exports": "./to-clf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["clf", "cli"],
+  "keywords": [
+    "clf",
+    "cli"
+  ],
   "author": {
     "name": "Francisco Ryan Tolmasky I",
     "email": "tolmasky@gmail.com",
@@ -24,5 +27,9 @@
   "dependencies": {
     "@babel/parser": "^7.15.7",
     "commander": "^8.2.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/tolmasky/to-clf/issues"
+  },
+  "homepage": "https://github.com/tolmasky/to-clf#readme"
 }
