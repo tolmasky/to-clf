@@ -6,14 +6,21 @@ const getOptionsParameter = ([parameter]) =>
     parameter.type === "AssignmentPattern" &&
     parameter.left.type === "ObjectPattern" ? parameter.left :
     false;
+const type = require("@algebraic/type");
+const array = require("./array");
 
+const toDashCase = string =>
+    string.replace(/[A-Z]/g, ch => `-${ch.toLowerCase()}`);
+
+const Command = require("./command");
+const Parameter = require("./parameter");
 
 module.exports = function (f, argv = false)
 {
     if (!argv && require.main && callsite() !== require.main.filename)
         return f;
 
-    const { Command, Argument } = require("commander");
+//    const { Command, Argument } = require("commander");
     const { parseExpression } = require("@babel/parser");
 
     const fExpression = parseExpression(f + "");
@@ -35,10 +42,14 @@ module.exports = function (f, argv = false)
             ...unadjustedArguments.slice(2)
         ] :
         unadjustedArguments;
-    const parameters = Object.fromEntries(properties
-        .map(toParameter)
-        .filter(parameter => !!parameter)
-        .map(parameter => [parameter.implied, parameter]));
+        console.log(properties);
+    const command = toCommand(f, properties);
+console.log(command.parameters);
+    return;
+
+        //
+        //.filter(parameter => !!parameter)
+        //.map(parameter => [parameter.implied, parameter]));
 
     return Object
         .values(parameters)
@@ -91,6 +102,14 @@ module.exports = function (f, argv = false)
         .parseAsync(adjustedArguments);
 }
 
+const toCommand = (f, properties) => Command
+({
+    name: f.name,
+    parameters: properties
+        .map(toParameter)
+        .filter(parameter => !!parameter)
+});
+
 const toDescription =
     ({ trailingComments }) =>
         trailingComments && trailingComments[0].value.trim();
@@ -109,31 +128,34 @@ const toUsage = ({ leadingComments }) =>
     leadingComments && leadingComments[0].value.trim() || "";
 
 const toParameterType = ({ value }) =>
-    value.type !== "AssignmentPattern" ? false :
-    value.right.type === "BooleanLiteral" ? "boolean" :
-    value.right.type === "ArrayExpression" ? "array" :
-    false;
+    value.type !== "AssignmentPattern" ? type.string :
+    value.right.type === "BooleanLiteral" ? type.boolean :
+    value.right.type === "StringLiteral" ? type.string :
+    value.right.type === "ArrayExpression" ? array :
+    type.string;
 
 const toParameter = (function ()
 {
     const toSingular = string => string.replace(/s$/, "");
-    const toFlag = (name, type) =>
-        (type === "array" ? toSingular : x => x)
-            (name.replace(/[A-Z]/g, ch => `-${ch.toLowerCase()}`));
+    const toFlag = (name, T) => Parameter.Flag
+    ({
+        short: name.charAt(0),
+        long: (T === array ? toSingular : x => x)(toDashCase(name))
+    });
 
     return function toParameter(node)
     {
         const name = node.key.name;
-        const type = toParameterType(node);
-
-        return !node.computed &&
-        {
-            flag: toFlag(name, type),
+        const T = toParameterType(node);
+console.log(T);
+        return !node.computed && Parameter.of(T)
+        ({
             name,
-            implied: type === "array" ? toSingular(name) : name,
+            flag: toFlag(name, T),
+//            implied: type === "array" ? toSingular(name) : name,
             description: toDescription(node),
             type
-        };
+        });
     }
 })();
 

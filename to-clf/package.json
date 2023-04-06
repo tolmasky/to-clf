@@ -25,7 +25,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@algebraic/dense-int-set": "^1.0.0-alpha.21",
+    "@algebraic/type": "^1.0.0-alpha.21",
     "@babel/parser": "^7.15.7",
+    "@climb/until": "^1.0.0-alpha.8",
     "commander": "^8.2.0"
   },
   "bugs": {
